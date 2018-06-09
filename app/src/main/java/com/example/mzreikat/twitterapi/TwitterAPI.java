@@ -1,5 +1,9 @@
 package com.example.mzreikat.twitterapi;
 
+import com.example.mzreikat.twitterapi.tweets.TweetDetails;
+
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -16,4 +20,8 @@ public interface TwitterAPI {
 
     @GET("/1.1/users/show.json")
     Call<UserDetails> getUserDetails(@Query("screen_name") String name);
+
+    @GET("1.1/statuses/user_timeline.json")
+    Call<List<TweetDetails>> getJSON(@Query("screen_name") String name,
+                               @Query("count") String count);
 }

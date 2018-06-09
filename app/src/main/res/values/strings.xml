@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">TwitterAPI</string>
 
+    <!--activity_main layout-->
     <string name="user_name">Username:</string>
     <string name="request_token_btn">Request token</string>
     <string name="request_user_details_btn">Request user details</string>
@@ -10,8 +11,15 @@
     <string name="url_txt_view">Url:</string>
     <string name="description_txt_view">Description:</string>
     <string name="enter_username">Enter a username</string>
-
     <string name="profile_image_view">profile_imageView</string>
+    <string name="reset_editText">Reset</string>
     <string name="reset_all_editText">Reset All</string>
+    <string name="view_tweets_editText">Tweets</string>
+    <string name="tweets_number_editText">tweets #</string>
+
+    <!--card_row layout-->
+    <string name="date_created">Date created</string>
+    <string name="tweet_id">Tweet id</string>
+    <string name="tweet_content">Tweet content</string>
 
 </resources>

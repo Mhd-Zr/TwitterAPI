@@ -33,17 +33,53 @@
             android:inputType="text"
             android:maxLines="1"
             android:hint="@string/enter_username" />
+
     </LinearLayout>
 
     <TextView
-        android:id="@+id/resetAll_editText"
+        android:id="@+id/reset_txtView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/username_container"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="15dp"
+        android:text="@string/reset_editText"
+        android:textColor="@color/blue"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/resetAll_txtView"
+        android:layout_width="wrap_content"
+        android:layout_height="30sp"
         android:layout_above="@+id/request_user_details_btn"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="15dp"
         android:text="@string/reset_all_editText"
-        android:textColor="@color/blue"/>
+        android:textColor="@color/blue"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/tweetsNum_editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/request_user_details_btn"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="5sp"
+        android:hint="@string/tweets_number_editText"
+        android:textSize="12sp"
+        android:inputType="number"
+        android:enabled="false"/>
+
+    <TextView
+        android:id="@+id/viewTweets_txtView"
+        android:layout_width="wrap_content"
+        android:layout_height="30sp"
+        android:layout_above="@id/request_user_details_btn"
+        android:layout_marginStart="80dp"
+        android:text="@string/view_tweets_editText"
+        android:textColor="@color/blue"
+        android:textSize="16sp"
+        android:enabled="false"/>
 
     <Button
         android:id="@+id/request_user_details_btn"

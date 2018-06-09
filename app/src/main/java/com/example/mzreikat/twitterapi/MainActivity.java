@@ -1,6 +1,7 @@
 package com.example.mzreikat.twitterapi;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
@@ -29,7 +30,8 @@ import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener
+{
     private String credentials = Credentials.basic("xeqwxQI0LfqvNS4vczUTfank3",
             "4ipr1Dc3aDxkeedFxgr8NYzIeX7WXm4Omsv1M7NzgEApRvwQI2");
 
@@ -44,7 +46,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView urlTxtView;
     private TextView descriptionTxtView;
 
-    private TwitterAPI twitterAPI;
+    private TextView tweetsNumEditTxt;
+    private TextView viewTweetsTxtView;
+
+    public static TwitterAPI twitterAPI;
     private OAuthToken token;
 
     @Override
@@ -66,43 +71,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         urlTxtView = findViewById(R.id.url_textView);
         descriptionTxtView = findViewById(R.id.description_textView);
 
-        TextView resetTxtView = findViewById(R.id.resetAll_editText);
-        resetTxtView.setOnClickListener(this);
+        tweetsNumEditTxt = findViewById(R.id.tweetsNum_editText);
+        viewTweetsTxtView = findViewById(R.id.viewTweets_txtView);
+        viewTweetsTxtView.setOnClickListener(this);
+
+        TextView resetAllTxtView = findViewById(R.id.resetAll_txtView);
+        resetAllTxtView.setOnClickListener(this);
+        TextView resetTextView   = findViewById(R.id.reset_txtView);
+        resetTextView.setOnClickListener(this);
 
         createTwitterApi();
     }
-
-    @Override
-    public void onClick(View v)
-    {
-        switch (v.getId()) {
-            case R.id.resetAll_editText:
-                resetAll();
-                break;
-            case R.id.request_token_btn:
-                if (checkInternet()) {
-                    twitterAPI.postCredentials("client_credentials").enqueue(tokenCallback);
-                }
-                else {
-                    Toast.makeText(this, "Check your internet connection", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            case R.id.request_user_details_btn:
-                if (checkInternet())
-                {
-                    String editTxtInput = userNameEditTxt.getText().toString().trim();
-                    if (!editTxtInput.isEmpty()) {
-                        twitterAPI.getUserDetails(editTxtInput).enqueue(userDetailsCallback);
-                    } else {
-                        Toast.makeText(this, "Please provide a username", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(this, "Check your internet connection", Toast.LENGTH_SHORT).show();
-                }
-                break;
-        }
-    }
-
     private void createTwitterApi() {
         OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
             @Override
@@ -126,17 +105,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         twitterAPI = retrofit.create(TwitterAPI.class);
     }
 
-    private void resetAll() {
-        userNameEditTxt.setText(null);
-        imageView.setImageBitmap(null);
-        nameTxtView.setText(R.string.api_txt_views);
-        locationTxtView.setText(R.string.api_txt_views);
-        urlTxtView.setText(R.string.api_txt_views);
-        descriptionTxtView.setText(R.string.api_txt_views);
-
-        userNameEditTxt.setFocusable(true);
-    }
-
     private Callback<OAuthToken> tokenCallback = new Callback<OAuthToken>() {
         @Override
         public void onResponse(@NonNull Call<OAuthToken> call, retrofit2.Response<OAuthToken> response) {
@@ -145,6 +113,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 requestUserDetailsBtn.setEnabled(true);
                 userNameTxtView.setEnabled(true);
                 userNameEditTxt.setEnabled(true);
+                tweetsNumEditTxt.setEnabled(true);
+                viewTweetsTxtView.setEnabled(true);
                 token = response.body();
             } else {
                 Toast.makeText(MainActivity.this, "Failure while requesting token", Toast.LENGTH_SHORT).show();
@@ -168,7 +138,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 locationTxtView.setText(userDetails.getLocation() == null ? "location not found" : userDetails.getLocation());
                 urlTxtView.setText(userDetails.getUrl() == null ? "url not found" : userDetails.getUrl());
                 descriptionTxtView.setText(userDetails.getDescription().isEmpty() ? "description not found" : userDetails.getDescription());
-
                 Picasso.with(MainActivity.this).load(processImageUrl(userDetails)).into(imageView);
 
             } else {
@@ -176,16 +145,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.d("UserDetailsCallback", "Code:" + response.code() + "Message: " + response.message());
             }
         }
-
         @Override
         public void onFailure(@NonNull Call<UserDetails> call, Throwable t) {
             t.printStackTrace();
         }
     };
 
-    private String processImageUrl(UserDetails userDetails) {
-        String url = userDetails.getProfile_image_url_https();
-        return url.substring(0, url.length() - 11) + ".jpg";
+    private void resetAll() {
+        userNameEditTxt.setText(null);
+        imageView.setImageBitmap(null);
+        tweetsNumEditTxt.setText(null);
+        nameTxtView.setText(R.string.api_txt_views);
+        locationTxtView.setText(R.string.api_txt_views);
+        urlTxtView.setText(R.string.api_txt_views);
+        descriptionTxtView.setText(R.string.api_txt_views);
+        userNameEditTxt.setFocusable(true);
     }
 
     private boolean checkInternet() {
@@ -195,6 +169,63 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 || connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED;
     }
 
+    private String processImageUrl(UserDetails userDetails) {
+        String url = userDetails.getProfile_image_url_https();
+        return url.substring(0, url.length() - 11) + ".jpg";
+    }
+
+    private void move() {
+        Intent intent = new Intent(this, Main2Activity.class);
+        intent.putExtra("username", userNameEditTxt.getText().toString());
+
+        String tweetsNumber = tweetsNumEditTxt.getText().toString().trim();
+        if (!tweetsNumber.isEmpty()) {
+            intent.putExtra("tweetsNum", tweetsNumber);
+        } else {
+            intent.putExtra("tweetsNum", "3");
+        }
+        startActivity(intent);
+    }
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.reset_txtView:
+                userNameEditTxt.setText(null);
+                break;
+            case R.id.resetAll_txtView:
+                resetAll();
+                break;
+            case R.id.viewTweets_txtView:
+                if (username()) {
+                    move();
+                } else {
+                    Toast.makeText(this, "Please provide a username", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case R.id.request_token_btn:
+                if (checkInternet()) {
+                    twitterAPI.postCredentials("client_credentials").enqueue(tokenCallback);
+                }
+                else {
+                    Toast.makeText(this, "Check your internet connection", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case R.id.request_user_details_btn:
+                if (checkInternet()) {
+                    if (username()) {
+                        twitterAPI.getUserDetails(userNameEditTxt.getText().toString().trim()).enqueue(userDetailsCallback);
+                    } else {
+                        Toast.makeText(this, "Please provide a username", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(this, "Check your internet connection", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
+    private boolean username() {
+        return !userNameEditTxt.getText().toString().trim().isEmpty();
+    }
     @Override
     public void onBackPressed() {
         finish();
