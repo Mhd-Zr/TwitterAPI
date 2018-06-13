@@ -22,6 +22,6 @@ public interface TwitterAPI {
     Call<UserDetails> getUserDetails(@Query("screen_name") String name);
 
     @GET("1.1/statuses/user_timeline.json")
-    Call<List<TweetDetails>> getJSON(@Query("screen_name") String name,
-                               @Query("count") String count);
+    Call<List<TweetDetails>> getTweetDetails(@Query("screen_name") String name,
+                                             @Query("count") String count);
 }

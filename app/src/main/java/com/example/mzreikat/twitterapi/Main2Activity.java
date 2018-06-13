@@ -29,7 +29,7 @@ public class Main2Activity extends AppCompatActivity
         String username  = intent.getStringExtra("username");
         String tweetsNum = intent.getStringExtra("tweetsNum");
 
-        Call<List<TweetDetails>> call = MainActivity.twitterAPI.getJSON(username, tweetsNum);
+        Call<List<TweetDetails>> call = MainActivity.twitterAPI.getTweetDetails(username, tweetsNum);
         call.enqueue(new Callback<List<TweetDetails>>() {
             @Override
             public void onResponse(@NonNull Call<List<TweetDetails>> call, @NonNull retrofit2.Response<List<TweetDetails>> response) {
